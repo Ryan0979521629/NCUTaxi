@@ -59,19 +59,35 @@
                 $guest_PhoneNumber=$_POST["guest_PhoneNumber"];
                 $sql7="SELECT * FROM`client`;";
                 $result3=mysqli_query($link,$sql7);
+
+
+                $sql10="SELECT * FROM`room` WHERE `random` =".$_POST["guest_randomnumber"];;
+                $result10=mysqli_query($link,$sql10);
+                
+                
                 while($row=mysqli_fetch_assoc($result3)){
                     if($row["phonenumber"]==$guest_PhoneNumber){
                             $count1+=1;}};
-                if($count1==0){
+                $sql11="SELECT COUNT(randomnumber) FROM `client` WHERE randomnumber = ".$_POST["guest_randomnumber"];
+                $result11=mysqli_query($link,$sql11);
+                $row11=mysqli_fetch_array($result11);
+                while($row10=mysqli_fetch_assoc($result10)){
+                    if($count1==0 && empty($row11[0])){$sql5="INSERT INTO `client` (`name`,`phonenumber`,`randomnumber`)VALUES(\'$guest_name\',\'$guest_PhoneNumber\',\'$create_randomnumber\')";
+                        $result1=mysqli_query($link,$sql5);}else{
+                    if($count1==0 ){if(!empty($row11[0])&&intval($row11[0]+1)<$row10["people"]){
                     $sql5="INSERT INTO `client` (`name`,`phonenumber`,`randomnumber`)VALUES(\'$guest_name\',\'$guest_PhoneNumber\',\'$create_randomnumber\')";
-                    $result1=mysqli_query($link,$sql5);
+                    $result1=mysqli_query($link,$sql5);}else{echo "<script>alert(\'已經滿人囉，下次請快一點\')</script>";
+                        echo "<script>window.location.href=\'app.php\'</script>";
+                    }
                     }else{
-                                }  }
-                if(isset($guest_PhoneNumber)){}else{$guest_PhoneNumber=-1;};   
+                                }  }}}
+                if(isset($guest_PhoneNumber)){}else{$guest_PhoneNumber=-1;}; 
+                if(isset($create_randomnumber)){}else{$create_randomnumber=$_POST["guest_randomnumber"];}    
            ?>');
            fwrite($myfile,'<!DOCTYPE html>
            <html>
                <head>
+                
                    <meta charset="UTF-8"></meta>
                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -99,7 +115,14 @@
                </head>
                <body>
                    <div class="center">
-                   <h1 style="float:left;fontsize:50px"><i class="fas fa-solid fa-bus-school"></i><?php echo $_SESSION["firstpoint"]?>&rArr; <?php echo $_SESSION["endpoint"]?></h1></div>
+                   <h1 style="float:left;fontsize:50px"><i class="fas fa-solid fa-bus-school"></i><?php
+                   $sql7="SELECT * FROM`room`;";
+                   $result4=mysqli_query($link,$sql7);
+                   if($result4){while($row=mysqli_fetch_assoc($result4)){
+                       if($row["random"]==$create_randomnumber){
+                           echo $row["location"];
+                         
+                           }}}?></h1></div>
                    <?php if(isset($_POST["guest_name02"])){echo "<h1>序號:".$_POST["guest_randomnumber"]."</h1>";}else{echo "<h1>序號:".$_SESSION["create_randomnumber"]."</h1>";}?>
                    <button  type="button" onclick="exit();" style="border-radius:10px ;text-align:center;height:50px;background-color:rgb(125, 225, 125);width:90px"><i class="fas fa-solid fa-chevron-left"></i>離開</button>
                    <script>
@@ -129,11 +152,18 @@
                             <td scope="col">Name</td>
                             <td scope="col">PhoneNumber</td>
                         </tr>
-                        <tr>
-                            <th scope="row">1</th>
-                            <th><?php echo $_SESSION["name"];?></th>
-                            <th><?php echo $_SESSION["phone"];?></th>
-                        </tr>
+                        <?php
+                        $sql7="SELECT * FROM`room`;";
+                        $result4=mysqli_query($link,$sql7);
+                        if($result4){while($row=mysqli_fetch_assoc($result4)){
+                            if($row["random"]==$create_randomnumber){
+                                echo "<tr>";
+                                echo "<th scope=\"row\">1</th>";
+                                echo "<th>".$row["firstname"]."</th>";
+                                echo "<th>"."0".$row["phone"]."</th>";
+                              
+                                echo "</tr>";}}}?>
+                        
                    <?php  $sql6="SELECT * FROM`client`;";
                     $result2=mysqli_query($link,$sql6);
                     if($result2){
